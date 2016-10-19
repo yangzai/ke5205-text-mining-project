@@ -104,7 +104,7 @@ vc2.fit(X2_train, y2_train)
 print '\tEnsemble (Majority Vote):\t%f' % vc2.score(X2_test, y2_test)
 print
 
-print 'Using Ensemble Model based on Titles of Msia dataset to predice Causes for osha dataset...'
+print 'Using Ensemble Model based on Titles of Msia dataset to predice Causes for OSHA dataset...'
 print
 
 text_lem_list_osha = lemmatize_df_col(osha, 'title') #title
@@ -113,5 +113,14 @@ text_lem_list_osha = lemmatize_df_col(osha, 'title') #title
 #vectorizer_osha = TfidfVectorizer(max_df=0.9, vocabulary=vectorizer.get_feature_names())
 X_osha = vectorizer.transform(text_lem_list_osha)
 osha_pred = vc.predict(X_osha)
+osha['cause'] = pd.Series(osha_pred)
 
+print 'Distribution of causes for Msia Accident Cases dataset (predicted):'
+osha_cause_count = osha.groupby('cause').size().sort_values(ascending=False)
+osha_cause_count.plot(kind='barh')
+plt.gca().invert_yaxis()
+plt.show()
+print osha_cause_count
+print
 
+osha.to_csv('data/osha_clean_predict.csv', index=False)
