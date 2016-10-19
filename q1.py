@@ -17,7 +17,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import VotingClassifier
 
 msia = pd.read_csv('data/MsiaAccidentCases_clean.csv')
-osha = pd.read_csv('data/osha_clean.csv', header=None)
+osha = pd.read_csv('data/osha_clean.csv')
 
 
 wnl = nltk.WordNetLemmatizer()
@@ -60,7 +60,7 @@ print
 
 print 'Training models based on Msia Accident Cases...'
 print 'Prediction score based on Title:'
-text_lem_list = lemmatize_df_col(msia, 'title_case')
+text_lem_list = lemmatize_df_col(msia, 'title')
 
 vectorizer = TfidfVectorizer(max_df=0.9)
 X = vectorizer.fit_transform(text_lem_list)
@@ -92,7 +92,7 @@ vc = VotingClassifier(estimators=[ \
 print '\tEnsemble (Majority Vote):\t%f' % vc.score(X_test, y_test)
 
 print 'Prediction score based on Summary:'
-text_lem_list2 = lemmatize_df_col(msia, 'summary_case')
+text_lem_list2 = lemmatize_df_col(msia, 'summary')
 vectorizer2 = TfidfVectorizer(max_df=0.9)
 X2 = vectorizer2.fit_transform(text_lem_list2)
 X2_train, X2_test, y2_train, y2_test = train_test_split(X2, y, test_size=0.2, random_state=seed)
@@ -107,13 +107,11 @@ print
 print 'Using Ensemble Model based on Titles of Msia dataset to predice Causes for osha dataset...'
 print
 
-text_lem_list_osha = lemmatize_df_col(osha, 1) #title
+text_lem_list_osha = lemmatize_df_col(osha, 'title') #title
 #vocab = set(reduce(lambda x, y: x + y, [l.split() for l in text_lem_list]))
 
 #vectorizer_osha = TfidfVectorizer(max_df=0.9, vocabulary=vectorizer.get_feature_names())
 X_osha = vectorizer.transform(text_lem_list_osha)
 osha_pred = vc.predict(X_osha)
-print osha_pred
 
-osha
 
