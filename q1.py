@@ -115,7 +115,7 @@ X_osha = vectorizer.transform(text_lem_list_osha)
 osha_pred = vc.predict(X_osha)
 osha['cause'] = pd.Series(osha_pred)
 
-print 'Distribution of causes for Msia Accident Cases dataset (predicted):'
+print 'Distribution of causes for OSHA Accident Cases dataset (predicted):'
 osha_cause_count = osha.groupby('cause').size().sort_values(ascending=False)
 osha_cause_count.plot(kind='barh')
 plt.gca().invert_yaxis()
