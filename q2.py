@@ -1,16 +1,18 @@
 # -*- coding: utf-8 -*-
-
 import pandas as pd
 import matplotlib.pyplot as plt
 import nltk
 from nltk import pos_tag, word_tokenize, sent_tokenize#, ne_chunk
 from nltk.corpus import stopwords, wordnet
+from wordcloud import WordCloud
+wnl = nltk.WordNetLemmatizer()
 
 msia = pd.read_csv('data/MsiaAccidentCases_clean.csv')
 osha = pd.read_csv('data/osha_clean_predict.csv')
-msia['title'] = msia.title.astype('string')
-wnl = nltk.WordNetLemmatizer()
-stop = set(stopwords.words('english'))
+
+stops = ['height', 'object', 'exposure', 'fall', 'slip', 'accident', \
+    'abdomen', 'knee', 'head', 'body', 'face', 'illness', 'heat']
+starts = ['in', 'between', 'by', 'with', 'from', 'on', 'off']
 
 def get_wordnet_pos(treebank_tag):
     if treebank_tag.startswith('J'):
@@ -23,27 +25,8 @@ def get_wordnet_pos(treebank_tag):
         return wordnet.NOUN
 
 def multiline_drop(s):
-    return s.split('  ')[0]
-#print ne_chunk(pos_tag(word_tokenize('I have a African American pen.')))
+    return s.split('  ')[0] #double space
 
-#def title_preposition_chunk(df):
-#    s = set()
-#    for index, row in df.iterrows():
-#        pos = pos_tag(word_tokenize(row.title))
-#        
-#        group = []
-#        for w, t in pos:
-#            if t == 'IN':
-#                group.append(w)
-#            elif len(group):
-#                s.add(' '.join(group))
-#                group = []
-#    return s
-#print title_preposition_chunk(msia)
-#print title_preposition_chunk(osha)
-
-stops = ['height', 'object', 'exposure', 'fall', 'slip', 'abdomen', 'knee', 'head', 'illness', 'heat']
-starts = ['in', 'between', 'by', 'with', 'from', 'on', 'off']
 def get_objects(chunked):
     res = []
     for n1 in chunked:
@@ -74,14 +57,19 @@ msia_title_objects = msia.title.apply(multiline_drop).str.lower() \
 
 msia_title_objects = [x for x in msia_title_objects if len(x)]
 msia_title_objects = pd.Series(reduce(lambda x, y: x + y, msia_title_objects))
-#msia_title_objects = reduce(lambda x, y: x | set(y), msia_title_objects, set())
 
-print 'Top 10 objects for Msia dataset:'
+print 'Top 10 accident objects for Msia dataset:'
 msia_object_count = msia_title_objects.groupby(msia_title_objects).size().sort_values(ascending=False)
 msia_object_count.head(10).plot(kind='barh')
 plt.gca().invert_yaxis()
 plt.show()
-print msia_object_count
+print msia_object_count.head(10)
+print 'Msia objects word cloud:'
+msia_word_string = ' '.join([w.replace(' ', '_') for w in msia_title_objects.tolist()])
+msia_word_cloud = WordCloud().generate(msia_word_string)
+plt.imshow(msia_word_cloud)
+plt.axis('off')
+plt.show()
 print
 
 osha_title_objects = osha.title.apply(multiline_drop).str.lower() \
@@ -90,14 +78,16 @@ osha_title_objects = osha.title.apply(multiline_drop).str.lower() \
 osha_title_objects = [x for x in osha_title_objects if len(x)]
 osha_title_objects = pd.Series(reduce(lambda x, y: x + y, osha_title_objects))
 
-print 'Top 10 objects for Osha dataset:'
+print 'Top 10 accident objects for OSHA dataset:'
 osha_object_count = osha_title_objects.groupby(osha_title_objects).size().sort_values(ascending=False)
 osha_object_count.head(10).plot(kind='barh')
 plt.gca().invert_yaxis()
 plt.show()
-print osha_object_count
-print
-
-#print chunker.parse(pos_tag(word_tokenize('Died being caught in between machines')))
-
-            
+print osha_object_count.head(10)
+print 'OSHA objects word cloud:'
+osha_word_string = ' '.join([w.replace(' ', '_') for w in osha_title_objects.tolist()])
+osha_word_cloud = WordCloud().generate(osha_word_string)
+plt.imshow(osha_word_cloud)
+plt.axis('off')
+plt.show()
+print         
