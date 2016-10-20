@@ -10,7 +10,7 @@ wnl = nltk.WordNetLemmatizer()
 msia = pd.read_csv('data/MsiaAccidentCases_clean.csv')
 osha = pd.read_csv('data/osha_clean_predict.csv')
 
-stops = ['height', 'object', 'exposure', 'fall', 'slip', 'accident', \
+stops = ['height', 'object', 'space', 'exposure', 'fall', 'slip', 'accident', \
     'abdomen', 'knee', 'head', 'body', 'face', 'illness', 'heat']
 starts = ['in', 'between', 'by', 'with', 'from', 'on', 'off']
 
@@ -48,7 +48,7 @@ def get_objects(chunked):
 pattern = r'''
 INALL: {<IN|RP>+}
 NALL: {<NN.*>+}
-NP: {<INALL><DT>?<NALL>}
+NP: {<INALL><DT>?<JJ.*>*<NALL>}
 '''
 chunker = nltk.RegexpParser(pattern)
 
