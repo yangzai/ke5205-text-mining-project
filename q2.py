@@ -2,7 +2,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import nltk
-from nltk import pos_tag, word_tokenize, sent_tokenize#, ne_chunk
+from nltk import pos_tag, word_tokenize, sent_tokenize
 from nltk.corpus import stopwords, wordnet
 from wordcloud import WordCloud
 wnl = nltk.WordNetLemmatizer()
@@ -12,17 +12,8 @@ osha = pd.read_csv('data/osha_clean_predict.csv')
 
 stops = ['height', 'object', 'space', 'exposure', 'fall', 'slip', 'accident', \
     'abdomen', 'knee', 'head', 'body', 'face', 'illness', 'heat']
+stops = stops + ['injures', 'sustains', 'explodes', 'suffers', 'fails', 'ignites', 'ignite'] #pos error
 starts = ['in', 'between', 'by', 'with', 'from', 'on', 'off']
-
-def get_wordnet_pos(treebank_tag):
-    if treebank_tag.startswith('J'):
-        return wordnet.ADJ
-    elif treebank_tag.startswith('V'):
-        return wordnet.VERB
-    elif treebank_tag.startswith('R'):
-        return wordnet.ADV
-    else:
-        return wordnet.NOUN
 
 def multiline_drop(s):
     return s.split('  ')[0] #double space
@@ -48,7 +39,7 @@ def get_objects(chunked):
 pattern = r'''
 INALL: {<IN|RP>+}
 NALL: {<NN.*>+}
-NP: {<INALL><DT>?<JJ.*>*<NALL>}
+NP: {<INALL><DT|CD>?<JJ.*>*<NALL>}
 '''
 chunker = nltk.RegexpParser(pattern)
 
@@ -90,4 +81,4 @@ osha_word_cloud = WordCloud().generate(osha_word_string)
 plt.imshow(osha_word_cloud)
 plt.axis('off')
 plt.show()
-print         
+print
