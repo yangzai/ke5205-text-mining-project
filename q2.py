@@ -10,14 +10,20 @@ wnl = nltk.WordNetLemmatizer()
 msia = pd.read_csv('data/MsiaAccidentCases_clean.csv')
 osha = pd.read_csv('data/osha_clean_predict.csv')
 
-stops = ['height', 'object', 'space', 'exposure', 'fall', 'slip', 'accident', \
-    'abdomen', 'knee', 'head', 'body', 'face', 'illness', 'heat']
-stops = stops + ['injures', 'sustains', 'explodes', 'suffers', 'fails', 'ignites', 'ignite'] #pos error
-starts = ['in', 'between', 'by', 'with', 'from', 'on', 'off']
+stops = set(['height', 'object', 'space', 'exposure', 'fall', 'slip', 'accident', \
+    'abdomen', 'knee', 'head', 'body', 'face', 'illness', 'heat'])
+errors = set(['injures', 'sustains', 'explodes', 'suffers', \
+    'fails', 'ignites', 'ignite', 'becomes', 'clearing', 'crush', \
+    'swings', 'breaks', 'tears', 'commits', 'fractures', 'loading', \
+    'amputates', 'punctures', 'kicks', 'smashes', 'strikes']) #pos error
+starts = set(['in', 'between', 'by', 'with', 'from', 'on', 'off'])
 
 def multiline_drop(s):
     return s.split('  ')[0] #double space
 
+def fix_pos(pos_list):
+    return [(w, 'VB') if w in errors and t.startswith('NN') else (w, t) for w, t in pos_list]
+    
 def get_objects(chunked):
     res = []
     for n1 in chunked:
@@ -44,7 +50,7 @@ NP: {<INALL><DT|CD>?<JJ.*>*<NALL>}
 chunker = nltk.RegexpParser(pattern)
 
 msia_title_objects = msia.title.apply(multiline_drop).str.lower() \
-    .apply(word_tokenize).apply(pos_tag).apply(chunker.parse).apply(get_objects)
+    .apply(word_tokenize).apply(pos_tag).apply(fix_pos).apply(chunker.parse).apply(get_objects)
 
 msia_title_objects = [x for x in msia_title_objects if len(x)]
 msia_title_objects = pd.Series(reduce(lambda x, y: x + y, msia_title_objects))
@@ -64,7 +70,7 @@ plt.show()
 print
 
 osha_title_objects = osha.title.apply(multiline_drop).str.lower() \
-    .apply(word_tokenize).apply(pos_tag).apply(chunker.parse).apply(get_objects)
+    .apply(word_tokenize).apply(pos_tag).apply(fix_pos).apply(chunker.parse).apply(get_objects)
 
 osha_title_objects = [x for x in osha_title_objects if len(x)]
 osha_title_objects = pd.Series(reduce(lambda x, y: x + y, osha_title_objects))
