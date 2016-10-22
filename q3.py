@@ -2,8 +2,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import nltk
-from nltk import pos_tag, word_tokenize, sent_tokenize
-from nltk.corpus import stopwords, wordnet
+from nltk import pos_tag, word_tokenize
 from wordcloud import WordCloud
 wnl = nltk.WordNetLemmatizer()
 
@@ -26,8 +25,7 @@ def get_occupation(chunked):
         if isinstance(n1, nltk.tree.Tree) and n1.label() == 'NP':
             for n2 in n1:
                 if isinstance(n2, nltk.tree.Tree):
-                    n2_label = n2.label();
-                    if n2_label == 'NALL':
+                    if n2.label() == 'NALL':
                         lem = [wnl.lemmatize(w) for w, t in n2]
                         filtered = [w for w in lem if w not in errors]
                         # reject 'worker' but accept 'farm worker'

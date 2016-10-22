@@ -2,8 +2,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import nltk
-from nltk import pos_tag, word_tokenize, sent_tokenize
-from nltk.corpus import stopwords, wordnet
+from nltk import pos_tag, word_tokenize
 from wordcloud import WordCloud
 wnl = nltk.WordNetLemmatizer()
 
@@ -35,7 +34,7 @@ def get_objects(chunked):
                     n2_label = n2.label();
                     if n2_label == 'INALL':
                         if n2.leaves()[-1][0] not in starts: is_valid = False 
-                    if n2_label == 'NALL':
+                    elif n2_label == 'NALL':
                         lem = [wnl.lemmatize(w) for w, t in n2]
                         filtered = [w for w in lem if w not in stops and not (w.endswith('tion') or w.endswith('sion'))]
                         nall = ' '.join(filtered)
