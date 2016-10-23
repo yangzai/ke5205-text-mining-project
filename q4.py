@@ -6,7 +6,6 @@ from nltk import pos_tag, word_tokenize, sent_tokenize
 from wordcloud import WordCloud
 wnl = nltk.WordNetLemmatizer()
 
-msia = pd.read_csv('data/MsiaAccidentCases_clean.csv')
 osha = pd.read_csv('data/osha_clean_predict.csv')
 
 pp_errors = set(['clearing', 'loading'])
