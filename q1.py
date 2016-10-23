@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 import string
-#import unicodedata
 import pandas as pd
 import matplotlib.pyplot as plt
-#import numpy as np
 import nltk
 from nltk import pos_tag, word_tokenize, sent_tokenize
 from nltk.corpus import stopwords, wordnet
@@ -33,7 +31,6 @@ def get_wordnet_pos(treebank_tag):
     else:
         return wordnet.NOUN
 
-#stop |= set(['die', 'kill'])
 def lemmatize_df_col(df, col):
     res=[]
     for index, row in df.iterrows():
@@ -56,7 +53,6 @@ plt.gca().invert_yaxis()
 plt.show()
 print msia_cause_count
 print
-
 
 print 'Training models based on Msia Accident Cases...'
 print 'Prediction score based on Title:'
@@ -108,9 +104,6 @@ print 'Using Ensemble Model based on Titles of Msia dataset to predice Causes fo
 print
 
 text_lem_list_osha = lemmatize_df_col(osha, 'title') #title
-#vocab = set(reduce(lambda x, y: x + y, [l.split() for l in text_lem_list]))
-
-#vectorizer_osha = TfidfVectorizer(max_df=0.9, vocabulary=vectorizer.get_feature_names())
 X_osha = vectorizer.transform(text_lem_list_osha)
 osha_pred = vc.predict(X_osha)
 osha['cause'] = pd.Series(osha_pred)

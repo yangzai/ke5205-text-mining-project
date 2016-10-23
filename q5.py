@@ -14,7 +14,7 @@ errors = set(['injures', 'sustains', 'explodes', 'suffers', \
     'amputates', 'punctures', 'kicks', 'smashes', 'strikes']) #pos error
 ones = set(['1', 'one'])
 
-def multiline_drop(s):
+def doublespace_multiline_drop(s):
     return s.split('  ')[0] #double space
 
 def fix_pos(pos_list):
@@ -46,7 +46,7 @@ NP: {^<DT|CD>?<NALL>(<POSALL><VALL>|<VALL>(<CC><DT|CD><NALL>)?)}
 '''
 chunker = nltk.RegexpParser(pattern)
 
-osha_title_victim_sm = osha.title.apply(multiline_drop).str.lower() \
+osha_title_victim_sm = osha.title.apply(doublespace_multiline_drop).str.lower() \
     .apply(word_tokenize).apply(pos_tag).apply(fix_pos).apply(chunker.parse) \
     .apply(is_single_victim).apply(lambda b: 'single' if b else 'multiple')
 

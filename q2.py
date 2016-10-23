@@ -17,7 +17,7 @@ errors = set(['injures', 'sustains', 'explodes', 'suffers', \
     'amputates', 'punctures', 'kicks', 'smashes', 'strikes']) #pos error
 starts = set(['in', 'between', 'by', 'with', 'from', 'on', 'off'])
 
-def multiline_drop(s):
+def doublespace_multiline_drop(s):
     return s.split('  ')[0] #double space
 
 def fix_pos(pos_list):
@@ -48,7 +48,7 @@ NP: {<INALL><DT|CD>?<JJ.*>*<NALL>}
 '''
 chunker = nltk.RegexpParser(pattern)
 
-msia_title_objects = msia.title.apply(multiline_drop).str.lower() \
+msia_title_objects = msia.title.apply(doublespace_multiline_drop).str.lower() \
     .apply(word_tokenize).apply(pos_tag).apply(fix_pos).apply(chunker.parse).apply(get_objects)
 
 msia_title_objects = [x for x in msia_title_objects if len(x)]
@@ -68,7 +68,7 @@ plt.axis('off')
 plt.show()
 print
 
-osha_title_objects = osha.title.apply(multiline_drop).str.lower() \
+osha_title_objects = osha.title.apply(doublespace_multiline_drop).str.lower() \
     .apply(word_tokenize).apply(pos_tag).apply(fix_pos).apply(chunker.parse).apply(get_objects)
 
 osha_title_objects = [x for x in osha_title_objects if len(x)]
