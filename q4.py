@@ -19,8 +19,8 @@ wnl_errors = {
 }
 past_to_bes = set(['was', 'were'])
 
-def period_multiline_drop(s): # 
-    return s.split('  ')[0] #double space
+def st_multiline_drop(s):
+    return sent_tokenize(s)[0]
     
 def fix_pos_with_pp(pos_list):
     return [
@@ -54,7 +54,7 @@ NP: {<PERSON><.*>*<SCOPE>}
 '''
 chunker = nltk.RegexpParser(pattern)
 
-osha_summary_activities = osha.summary.str.lower().apply(period_multiline_drop) \
+osha_summary_activities = osha.summary.str.lower().apply(st_multiline_drop) \
     .apply(word_tokenize).apply(pos_tag).apply(fix_pos_with_pp) \
     .apply(past_to_be_retag).apply(chunker.parse).apply(get_activities)
 
